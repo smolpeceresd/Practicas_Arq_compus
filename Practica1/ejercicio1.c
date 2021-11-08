@@ -16,5 +16,10 @@ int main (int argc, char** argv) {
     finish = MPI_Wtime();
     time = finish-start;
     printf("soy el proceso %d de un total de %d. TIME: %f \n", myrank, nproc,time);
+    //Para registrar el tiempo
+    char *filename = "grafico.csv";
+    FILE *fp = fopen(filename, "a");
+    fprintf(fp, "%i,%f\n",myrank,(time));
+    fclose(fp);
     MPI_Finalize(); //Fin
 }
