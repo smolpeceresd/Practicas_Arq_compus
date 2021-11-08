@@ -1,53 +1,52 @@
-#include <mpi.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <mpi.h>
 
-  int numero = 999;
-
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-    int nprocesos;
-    int ID;
+  MPI_Status status;
+  int num, rank, size, tag, next, from;
 
-    MPI_Init(&argc, &argv); //Inicia el MIP
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+ 
+  /* Usaremos una etiqueta arbitraria de valor 201.
+     Calculamos el identificador (rango) del siguiente y del anterior, suponiendo un anillo */
 
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocesos); //Devuelve en la variable nprocesos, el número de procesos actuales en el comunicador del primer parámetro.
-    MPI_Comm_rank(MPI_COMM_WORLD, &ID);        //Devuelve el id del proceso actual dentro del comunicador.
+  tag = 201;
+  next = (rank + 1) % size;
+  from = (rank + size - 1) % size;
 
-    // Para hacer rebote tiene que haber un máximo de solo dos procesos
-    if (nprocesos != 2)
-    {
-        printf("El numero de procesos debe ser igual a 2");
-        exit(0);
+  /* En uno de los procesos, el "primario", preguntamos un parametro */
+
+  if (rank == 0) {
+    printf("Introduce el numero de vueltas al anillo:\n");
+    scanf("%d", &num);
+
+    printf("Proceso %d envia %d al proceso %d\n", rank, num, next);
+    MPI_Send(&num, 1, MPI_INT, next, tag, MPI_COMM_WORLD); 
+  }
+
+  /* Los procesos "pasan" el numero de vueltas que faltan.
+  Cuando llega al proceso 0, se descuenta una vuelta.
+  Cuando un proceso recibe un 0, lo pasa y termina. */
+
+  do {
+
+    MPI_Recv(&num, 1, MPI_INT, from, tag, MPI_COMM_WORLD, &status);
+    printf("Proceso %d ha recibido %d\n", rank, num);
+
+    if (rank == 0) {
+      --num;
+     // printf("Proceso 0 descuenta una vuelta\n");
     }
-    int contador = 0;
-    int rebote = (ID + 1) % 2;
-    if (ID == 0 && numero == 999)
-    {
-        printf("Introduce el valor entero que enviaremos a todos los procesos:\n");
-        scanf("%i", &numero);
-        printf(" ----> %i ha sido introducido.\n", numero);
-    }
+     if(num>0){
+      MPI_Send(&num, 1, MPI_INT, next, tag, MPI_COMM_WORLD);
+      printf("Proceso %d envia %d al proceso %d\n", rank, num, next);
+     }
 
-
-    while (contador < numero)
-    {
-        if (ID == contador % 2)
-        {
-            contador++;
-            MPI_Send(&contador, 1, MPI_INT, rebote, 0, MPI_COMM_WORLD);
-            printf("PAR: %d enviado y contador suma %d mas %d\n",
-                   numero, contador, rebote);
-        }
-        else
-        {
-            MPI_Recv(&contador, 1, MPI_INT, rebote, 0, MPI_COMM_WORLD,
-                     MPI_STATUS_IGNORE);
-            printf("IMPAR: %d enviado y contador suma %d mas %d\n",
-                   numero, contador, rebote);
-        }
-        
-    }
-
-    MPI_Finalize();
+  } while (num > 0);
+  printf("Proceso %d termina %i\n", rank,num);
+  MPI_Finalize();
+return 0;
 }
