@@ -22,26 +22,27 @@ int main(int argc, char **argv)
     if(rank!=0)MPI_Recv(&count, 1, MPI_INT, 0, 101, MPI_COMM_WORLD,&status);
     while (1)
     {
+        char msg2[20];
         if(rank==0){
-        MPI_Recv(&msg, 13, MPI_CHAR, 1, 100, MPI_COMM_WORLD,&status);
+        MPI_Recv(&msg2, 13, MPI_CHAR, 1, 100, MPI_COMM_WORLD,&status);
         printf("Proceso %d ha recibido %s \n", rank, msg);
             --count;
             if(count==0){
                 break;
             }else{
-                MPI_Send(&msg,13, MPI_CHAR, 1, 100, MPI_COMM_WORLD);
+                MPI_Send(&msg2,13, MPI_CHAR, 1, 100, MPI_COMM_WORLD);
                 printf("Proceso %d envia : %s  - al proceso %d\n", rank,msg,1);
             }
         }else{
-            MPI_Recv(&msg, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD,&status);
+            MPI_Recv(&msg2, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD,&status);
             printf("Proceso %d ha recibido %s \n", rank, msg);
             --count;
             if(count==0){
-                MPI_Send(&msg, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD);
+                MPI_Send(&msg2, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD);
                 printf("Proceso %d envia : %s  - al proceso %d\n", rank,msg,0);
                 break;
             }else{
-                MPI_Send(&msg, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD);
+                MPI_Send(&msg2, 13, MPI_CHAR, 0, 100, MPI_COMM_WORLD);
                 printf("Proceso %d envia : %s  - al proceso %d\n", rank,msg,0);
             }
         }
