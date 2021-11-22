@@ -32,14 +32,14 @@ int main(int argc, char **argv)
             if(count<max){
                 //como ya he enviado 1, espero la proxima recepcion
                 MPI_Recv(&b,lenght, MPI_INT, envio_recibo, 100, MPI_COMM_WORLD,&status);
-                printf("El proceso %d ha recivido\n",rank);
+                printf("El proceso %d ha recibido\n",rank);
                 int j=0;while (j<lenght){printf("Iteracion %i - %0.1f\n",j,b[j]);j=j+1;};
                 MPI_Send(&a, lenght, MPI_FLOAT, envio_recibo, 100, MPI_COMM_WORLD);
                 printf("Proceso %d envia : A - al proceso %d\n", rank,envio_recibo);
                 count++;
             }else{
                 MPI_Recv(&b,lenght, MPI_INT, envio_recibo, 100, MPI_COMM_WORLD,&status);
-                printf("El proceso %d ha recivido\n",rank);
+                printf("El proceso %d ha recibido\n",rank);
                 int j=0;while (j<lenght){printf("Iteracion %i - %0.1f\n",j,b[j]);j=j+1;};
                 break;
             }         
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
             //Analizo las recepciones
             envio_recibo=0;
                 MPI_Recv(&b,lenght, MPI_INT, envio_recibo, 100, MPI_COMM_WORLD,&status);
-                printf("El proceso %d ha recivido\n",rank);
+                printf("El proceso %d ha recibido\n",rank);
                 int j=0;while (j<lenght){printf("Iteracion %i - %0.1f\n",j,b[j]);j=j+1;};
                 count++;
                 MPI_Send(&a, lenght, MPI_FLOAT, envio_recibo, 100, MPI_COMM_WORLD);
