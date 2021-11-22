@@ -2,8 +2,8 @@
 #include "mpi.h"
 int main(int argc, char **argv)
 {
-    int rank,count=0,size,lenght=5,max;
-    float a[5]={};
+    int rank,count=0,size,lenght=10000,max;
+    float a[10000]={};
 
   MPI_Status status;
   MPI_Init(&argc, &argv);

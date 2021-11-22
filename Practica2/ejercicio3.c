@@ -5,8 +5,8 @@
 int main(int argc, char** argv)
 {
 int size;
-int rank,lenght=5;
-float a[5]={},b[5]={};
+int rank,lenght=10000;
+float a[10000]={},b[10000]={};
 MPI_Status status;;
 MPI_Init(&argc, &argv);
 MPI_Comm_size(MPI_COMM_WORLD, &size);
