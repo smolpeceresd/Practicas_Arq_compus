@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     if(rank!=0)MPI_Recv(&max, 1, MPI_INT, 0, 101, MPI_COMM_WORLD,&status);
     while (1)
     {
-        float b[5]={};
+        float b[10000]={};
         int envio_recibo;
         if(rank==0){
             //Analizo los envios
